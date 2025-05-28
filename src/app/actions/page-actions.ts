@@ -1,79 +1,100 @@
 'use server'
 
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { cookies } from 'next/headers';
 
 type MethodTypes = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
-interface ApiCallOptions {
-  url: string;
-  method?: MethodTypes;
-  data?: any;
-  timeout?: number;
-  contentType?: string;
-  responseType?: string;
-  baseURL?: string;
-  axiosArgs?: any;
+interface ApiError {
+  name: string;
+  data: unknown;
+  status?: number;
+  isNetworkError: boolean;
 }
 
-const getHeaders = (contentType: string) => {
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: ApiError;
+}
+
+interface ApiCallOptions extends Omit<AxiosRequestConfig, 'url' | 'method' | 'data'> {
+  url: string;
+  method?: MethodTypes;
+  data?: Record<string, unknown>;
+  timeout?: number;
+  contentType?: string;
+}
+
+const getHeaders = (contentType: string): Record<string, string> => {
   const cookieStore = cookies();
   const token = cookieStore.get('token')?.value;
   
-  let headers: Record<string, string> = { "Content-Type": contentType };
+  const headers: Record<string, string> = { "Content-Type": contentType };
   if (token) headers.Authorization = `bearer ${token}`;
   return headers;
 };
 
-export async function serverApiCall({
+export async function serverApiCall<T>({ 
   url,
   method = 'GET',
   data = {},
   timeout = 20000,
   contentType = 'application/json',
-  responseType,
-  baseURL = process.env.API_BASE_URL,
-  axiosArgs = {}
-}: ApiCallOptions) {
+  ...axiosArgs
+}: ApiCallOptions): Promise<ApiResponse<T>> {
   try {
-    const response = await axios({
+    const response: AxiosResponse<T> = await axios({
       url,
-      baseURL,
       method,
       timeout,
-      responseType,
       headers: getHeaders(contentType),
-      params: method === 'GET' ? data : {},
-      data: method !== 'GET' ? data : {},
+      params: method === 'GET' ? data : undefined,
+      data: method !== 'GET' ? data : undefined,
       validateStatus: (status) => (status >= 200 && status < 300) || status === 412,
       ...axiosArgs
     });
 
     return { success: true, data: response.data };
-  } catch (err: any) {
+  } catch (err) {
+    if (axios.isAxiosError(err)) {
+      return {
+        success: false,
+        error: {
+          name: err.name,
+          data: err.response?.data,
+          status: err.response?.status,
+          isNetworkError: err.message === 'Network Error' || err.code === 'ECONNABORTED'
+        }
+      };
+    }
+    
     return {
       success: false,
       error: {
-        name: err.name,
-        data: err.response?.data,
-        status: err.response?.status,
-        isNetworkError: err.message === 'Network Error' || err.code === 'ECONNABORTED'
+        name: 'UnknownError',
+        data: err instanceof Error ? err.message : 'Unknown error occurred',
+        isNetworkError: false
       }
     };
   }
 }
 
-// Example usage in your server action
-export async function updatePageStateServer(data: any) {
-  const result = await serverApiCall({
+interface PageState {
+  // Define your page state type here
+  [key: string]: unknown;
+}
+
+export async function updatePageStateServer(data: PageState): Promise<PageState> {
+  const result = await serverApiCall<PageState>({
     url: '/your-api-endpoint',
     method: 'POST',
     data
   });
 
   if (!result.success) {
-    throw new Error(result.error.data?.message || 'API call failed');
+    throw new Error(result.error?.data as string || 'API call failed');
   }
 
-  return result.data;
+  return result.data as PageState;
 }
