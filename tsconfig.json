@@ -21,6 +21,14 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/utils/store/store.js", "src/utils/store/common/pageSlice.js"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/utils/store/store.js",
+    "src/utils/store/common/pageSlice.js",
+    "declarations.d.ts"
+  ],
   "exclude": ["node_modules"]
 }
