@@ -1,12 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { updatePageStateServer } from '@/app/actions/page-actions';
-
-const initialState = {
-  pageLoading: false,
-  pageLoaderText: 'Loading...',
-  modalLoading: false,
-  authLoading: false
-};
+import initialState from './initialState';
 
 export const pageSlice = createSlice({
   name: 'page',
@@ -37,7 +31,7 @@ export default pageSlice.reducer;
 
 
 // Server-side operation in component how to use it
-import { updatePageStateAsync } from '@/utils/store/slices/pageSlice';
+//import { updatePageStateAsync } from '@/utils/store/slices/pageSlice';
 
 //! In your component how to call api
 // const handleUpdate = async (data) => {
