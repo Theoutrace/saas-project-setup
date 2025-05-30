@@ -38,6 +38,7 @@ export const ROUTE_PATHS = Object.freeze({
     PRICING: "/pricing",
     BILLING: "/billing",
     THANK_YOU: "/thank-you",
+    PRIVACY_POLICY: "/policies/privacy-policy",
 
     //---------------- APP SELECTED VOICE AGENT ROUTES -- // TODO for any special categories
     VA_OVERVIEW: "",

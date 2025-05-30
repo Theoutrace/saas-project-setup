@@ -13,6 +13,10 @@ const config: Config = {
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        success: "#22c55e", // green-500
+        error: "#ef4444",   // red-500
+        warning: "#facc15", // yellow-400
+        info: "#3b82f6",    // blue-500
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
