@@ -126,6 +126,7 @@ const UpdateNotifier = () => {
               {currentFeature.gifUrl && (
                 <div className="flex justify-center mb-2 h-72 items-center">
                   <Image
+                    loading="eager"
                     src={currentFeature.gifUrl}
                     alt={currentFeature.title}
                     width={300}
