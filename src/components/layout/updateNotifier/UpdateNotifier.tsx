@@ -131,7 +131,7 @@ const UpdateNotifier = () => {
                     alt={currentFeature.title}
                     width={300}
                     height={200}
-                    className="rounded-lg max-h-72 w-full shadow-2xl"
+                    className="rounded-lg max-h-72 w-full shadow-2xl bg-gradient-to-b from-white to-purple-300"
                   />
                 </div>
               )}
