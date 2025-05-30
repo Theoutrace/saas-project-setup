@@ -30,8 +30,8 @@ const AuthPage = () => {
             );
           default:
             return (
-              <div className="w-full max-w-sm">
-                <EmailSignup />
+              <div className="w-full max-w-sm md:max-w-3xl">
+                <LoginForm />
               </div>
             );
         }

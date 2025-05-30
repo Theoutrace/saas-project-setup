@@ -1,6 +1,6 @@
-"use client";
-import { useEffect, useState } from "react";
-import { getLatestVersion } from "@/utils/data/versions";
+'use client';
+import { useEffect, useState } from 'react';
+import { getLatestVersion } from '@/utils/data/versions';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,12 +23,20 @@ const UpdateNotifier = () => {
   const [direction, setDirection] = useState(0);
 
   useEffect(() => {
-    const storedVersion = localStorage.getItem("appVersion");
+    const storedVersion = localStorage.getItem('appVersion');
     const latest = getLatestVersion();
     setLatestVersion(latest);
+    
+    // Preload all GIFs
+    latest.features.forEach(feature => {
+      if (feature.gifUrl) {
+        const img = new window.Image(300, 200);
+        img.src = feature.gifUrl;
+      }
+    });
 
     if (!storedVersion) {
-      localStorage.setItem("appVersion", latest.version);
+      localStorage.setItem('appVersion', latest.version);
     } else if (storedVersion !== latest.version) {
       setShowUpdate(true);
     }
